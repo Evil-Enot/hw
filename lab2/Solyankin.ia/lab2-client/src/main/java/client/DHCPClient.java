@@ -14,7 +14,7 @@ public class DHCPClient extends Thread {
     private final static byte[] serverHost = new byte[]{(byte) 255, (byte) 255, (byte) 255, (byte) 255};
     private DatagramSocket clientSocket;
 
-    private final byte[] mac = {(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    private final byte[] mac = {(byte) 0xFF, (byte) 0xF2, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
     public DHCPClient() {
         try {
@@ -33,11 +33,12 @@ public class DHCPClient extends Thread {
         byte[] buffer = new byte[576];
         int length = buffer.length;
         DatagramPacket receivePacketOffer = new DatagramPacket(buffer, length);
+        DatagramPacket receivePacketAck = new DatagramPacket(buffer, length);
 
         DHCPDiscover();
 
         try {
-            clientSocket.setSoTimeout(600000);
+            clientSocket.setSoTimeout(3000);
             clientSocket.receive(receivePacketOffer);
             System.out.println("Receive offer response from server");
         } catch (IOException e) {
@@ -47,7 +48,6 @@ public class DHCPClient extends Thread {
 
         DHCPRequest(receivePacketOffer);
 
-        DatagramPacket receivePacketAck = new DatagramPacket(buffer, length);
         try {
             clientSocket.receive(receivePacketAck);
             System.out.println("Receive ack response from server");
@@ -103,7 +103,7 @@ public class DHCPClient extends Thread {
         message.file = new byte[128];
         message.magicCookie = DHCPMessage.COOKIE;
         message.addOption((byte) 53, (byte) 1, new byte[]{DHCPMessage.DHCPDISCOVER});
-        message.addOption((byte) 51, (byte) 4, Tools.toByteArray(300));
+        message.addOption((byte) 51, (byte) 4, Tools.toByteArray(10));
         message.addOption((byte) 255, (byte) 0, new byte[]{0});
 
         try {
@@ -129,7 +129,7 @@ public class DHCPClient extends Thread {
         message.addOption((byte) 53, (byte) 1, new byte[]{DHCPMessage.DHCPREQUEST});
         message.addOption((byte) 50, (byte) 4, message.yiAddr);
         message.addOption((byte) 54, (byte) 4, message.siAddr);
-        message.addOption((byte) 51, (byte) 4, Tools.toByteArray(300));
+        message.addOption((byte) 51, (byte) 4, Tools.toByteArray(10));
         message.addOption((byte) 255, (byte) 0, new byte[]{0});
 
         try {
