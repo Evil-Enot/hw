@@ -35,8 +35,7 @@ public class DHCPMessage {
     public byte[] magicCookie = new byte[4];
     private ArrayList<Options> options = new ArrayList<>();
 
-    public DHCPMessage() {
-    }
+    public DHCPMessage() { }
 
     public DHCPMessage(byte[] buffer) {
         op = buffer[0];
